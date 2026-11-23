@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-ink-800 antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+
+  /* 细滚动条，契合科研软件的克制观感 */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.ink.300') transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    @apply rounded-full border-[3px] border-solid border-transparent bg-ink-300 bg-clip-content;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-400 bg-clip-content;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-400 ring-offset-1 ring-offset-white;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-lg border border-ink-200 bg-white shadow-card;
+  }
+
+  /* ===== PDF.js TextLayer（真实可选中文本，非截图）=====
+     规则取自 pdfjs-dist/web/pdf_viewer.css 的 .textLayer 子集，按本项目调色。 */
+  .textLayer {
+    position: absolute;
+    text-align: initial;
+    inset: 0;
+    overflow: clip;
+    opacity: 1;
+    line-height: 1;
+    text-size-adjust: none;
+    forced-color-adjust: none;
+    transform-origin: 0 0;
+    caret-color: CanvasText;
+    z-index: 0;
+  }
+  .textLayer :is(span, br) {
+    color: transparent;
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+  }
+  .textLayer > :not(.markedContent),
+  .textLayer .markedContent span:not(.markedContent) {
+    z-index: 1;
+  }
+  .textLayer span.markedContent {
+    top: 0;
+    height: 0;
+  }
+  .textLayer ::selection {
+    background: color-mix(in srgb, #3b82f6, transparent 72%);
+  }
+  .textLayer .endOfContent {
+    display: block;
+    position: absolute;
+    inset: 100% 0 0;
+    z-index: 0;
+    cursor: default;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  /* 搜索命中高亮 */
+  .textLayer em.pdf-hit {
+    background: rgba(250, 204, 21, 0.45);
+    border-radius: 2px;
+    font-style: normal;
+    margin: -1px;
+    padding: 1px;
+  }
+  .hairline {
+    @apply border-ink-200;
+  }
+  /* 首页 hero 的极轻层次背景（不喧宾夺主） */
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, rgba(47, 92, 192, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(47, 92, 192, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
+
+/* PDF.js 文本层（Phase 2 启用选中时生效） */
+.pdf-text-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.25;
+  line-height: 1;
+  pointer-events: none;
+}
+.pdf-text-layer > span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  transform-origin: 0 0;
+}
